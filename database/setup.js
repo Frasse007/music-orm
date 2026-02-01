@@ -75,7 +75,6 @@ const Track = db.define('Track', {
         allowNull: false,
         validate: {
             isInt: true,
-            min: 1900,
             max: new Date().getFullYear()
         }
     }
