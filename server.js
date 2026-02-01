@@ -60,7 +60,7 @@ app.post('/api/tracks', async (req, res) => {
             return res.status(400).json({ error: 'Duration must be a positive number' });
         }
 
-        if (typeof releaseYear !== 'number' || releaseYear < 1900 || releaseYear > new Date().getFullYear()) {
+        if (typeof releaseYear !== 'number' || releaseYear > new Date().getFullYear()) {
             return res.status(400).json({ error: 'Release year must be a valid year'});
         }
 
@@ -91,7 +91,7 @@ app.put('/api/tracks/:id', async (req, res) => {
             return res.status(400).json({ error: 'Duration must be a positive number' });
         }
 
-        if (releaseYear !== undefined && (typeof releaseYear !== 'number' || releaseYear < 1900 || releaseYear > new Date().getFullYear())) {
+        if (releaseYear !== undefined && (typeof releaseYear !== 'number' || releaseYear > new Date().getFullYear())) {
             return res.status(400).json({ error: 'Release year must be a valid year'});
         }
 
