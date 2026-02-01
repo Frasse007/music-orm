@@ -19,6 +19,14 @@ async function testConnection() {
 }
 testConnection();
 
+// Input sanitization for strings (removes HTML tags and trims whitespace)
+const sanitizeInput = (input) => {
+    if (typeof input === 'string') {
+        return input.trim().replace(/<[^>]*>/g, '');
+    }
+    return input;
+};
+
 // GET /api/tracks - Gets all tracks
 app.get('/api/tracks', async (req, res) => {
     try {
@@ -48,11 +56,22 @@ app.get('/api/tracks/:id', async (req, res) => {
 // POST /api/tracks - Creates new track
 app.post('/api/tracks', async (req, res) => {
     try {
-        const { songTitle, artistName, albumName, genre, duration, releaseYear } = req.body;
+        let { songTitle, artistName, albumName, genre, duration, releaseYear } = req.body;
+
+        // Sanitize string inputs
+        songTitle = sanitizeInput(songTitle);
+        artistName = sanitizeInput(artistName);
+        albumName = sanitizeInput(albumName);
+        genre = sanitizeInput(genre);
 
         // Validate required fields
         if (!songTitle || !artistName || !albumName || !genre || !duration || !releaseYear) {
             return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Check for empty strings after trim
+        if (songTitle === '' || artistName === '' || albumName === '' || genre === '') {
+            return res.status(400).json({ error: 'Fields cannot be empty or contain only whitespace' });
         }
 
         // Validate data types
@@ -84,7 +103,13 @@ app.post('/api/tracks', async (req, res) => {
 app.put('/api/tracks/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        const { songTitle, artistName, albumName, genre, duration, releaseYear } = req.body;
+        let { songTitle, artistName, albumName, genre, duration, releaseYear } = req.body;
+
+        // Sanitize string inputs
+        songTitle = sanitizeInput(songTitle);
+        artistName = sanitizeInput(artistName);
+        albumName = sanitizeInput(albumName);
+        genre = sanitizeInput(genre);
 
         // Validate input if provided
         if (duration !== undefined && (typeof duration !== 'number' || duration <= 0)) {
